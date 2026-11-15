@@ -54,7 +54,7 @@ if not k:
     m = re.search(r"GEMINI_API_KEY\s*=\s*['\"]?([^'\"\n]+)", open(os.path.join(os.environ["S"], ".env")).read())
     k = m.group(1).strip()
 c = genai.Client(api_key=k, http_options=types.HttpOptions(timeout=30000))
-print((c.models.generate_content(model="gemini-2.5-flash", contents="Reply with the single word ok.").text or "").strip()[:20])
+print((c.models.generate_content(model="gemini-3.5-flash", contents="Reply with the single word ok.").text or "").strip()[:20])
 PYEOF
 )
   case "$r" in [Oo]k*) pass "GEMINI_API_KEY works (one test call)";;

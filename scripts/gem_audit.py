@@ -60,7 +60,7 @@ def client():
 
 
 def check(cl):
-    r = cl.models.generate_content(model="gemini-2.5-flash", contents="Reply with the single word: ok")
+    r = cl.models.generate_content(model="gemini-3.5-flash", contents="Reply with the single word: ok")
     if not (r.text or "").strip(): sys.exit("Gemini key check failed")
     print("key ok:", r.text.strip(), flush=True)
 
@@ -94,7 +94,7 @@ def generate(cl, types, contents, minlen, temperature=0.2, max_tokens=60000):
     last = None
     for attempt in range(4):
         try:
-            r = cl.models.generate_content(model="gemini-2.5-pro", contents=contents,
+            r = cl.models.generate_content(model="gemini-3.6-flash", contents=contents,
                                            config=types.GenerateContentConfig(temperature=temperature, max_output_tokens=max_tokens))
             text = r.text or ""
             if len(text) < minlen: raise RuntimeError(f"short reply ({len(text)} chars)")

@@ -14,7 +14,7 @@
 Gemini (GEMINI_API_KEY, or the skill's .env) reads a sheet of 6 frames from the window the reel uses. Answers are
 cached in library/vision-cache/ by file, window, line and prompt version, so broll_qa.py (which runs the same check on
 the render's composition: checks `people` and `match`) costs nothing for shots already checked. A failed call is
-retried; if it still fails the shot is UNCHECKED, never passed. Model: BROLL_VISION_MODEL (default gemini-2.5-flash).
+retried; if it still fails the shot is UNCHECKED, never passed. Model: BROLL_VISION_MODEL (default gemini-3.5-flash).
 Rules: BROLL_PEOPLE_RULES (default people-rules.json next to SKILL.md); a change to the rules re-asks every shot.
 """
 import argparse
@@ -36,7 +36,7 @@ import grade_lib as G  # noqa: E402
 
 CACHE = os.path.join(HERE, "..", "library", "vision-cache")
 PROMPT_V = 2
-MODEL = os.environ.get("BROLL_VISION_MODEL", "gemini-2.5-flash")
+MODEL = os.environ.get("BROLL_VISION_MODEL", "gemini-3.5-flash")
 STILL = re.compile(r"\.(jpe?g|png|webp|heic)$", re.I)
 
 RULES_PATH = os.environ.get("BROLL_PEOPLE_RULES") or os.path.join(HERE, "..", "people-rules.json")
@@ -184,7 +184,7 @@ def _check(path, tin=0.0, dur=None, line=None):
         return {"error": f"frames: {e}"}
     prompt = PROMPT.format(n=len(fr), line_part=LINE_PART.format(line=line) if line else "")
     err = None
-    models = [MODEL] + [m for m in ("gemini-2.5-pro",) if m != MODEL]
+    models = [MODEL] + [m for m in ("gemini-3.6-flash",) if m != MODEL]
     for wait in (0, 3, 8, 20):
         time.sleep(wait)
         model = models[0]

@@ -16,5 +16,5 @@ Data: `metrics.json` holds glyph advance widths measured from the bundled OFL fo
 JetBrains Mono, Geist; SIL OFL 1.1) by `scripts/font_metrics.py` with fontTools (MIT) + brotli (MIT) in the optional venv
 `~/.venvs/ghost-captions` (`scripts/setup_captions.sh`). Numbers only, no glyph outlines.
 
-Service: `ai-tag.mjs` calls Google Gemini (`gemini-2.5-flash`) with `GEMINI_API_KEY`; optional, the default keyword picker is
+Service: `ai-tag.mjs` calls Google Gemini (`gemini-3.5-flash`) with `GEMINI_API_KEY`; optional, the default keyword picker is
 an offline heuristic.
