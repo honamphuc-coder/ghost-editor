@@ -17,7 +17,11 @@ export const AI_TAGS = ["emotion", "number", "name", "negation", "action", "cont
 async function call(model, key, body) {
   const r = await fetch(`${API}/${model}:generateContent`, { method: "POST", headers: { "x-goog-api-key": key, "Content-Type": "application/json" }, body: JSON.stringify(body) });
   const j = await r.json();
-  if (j.error) throw new Error(`Gemini ${model}: ${j.error.status || ""} ${j.error.message}`);
+  if (j.error) {
+    const viaProxy = process.env.HTTPS_PROXY && !process.env.NODE_USE_ENV_PROXY && !process.execArgv.includes("--use-env-proxy");
+    const hint = viaProxy && /API key/i.test(j.error.message || "") ? " (HTTPS_PROXY is set but Node is not using it: run node --use-env-proxy)" : "";
+    throw new Error(`Gemini ${model}: ${j.error.status || ""} ${j.error.message}${hint}`);
+  }
   return j.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("") ?? "";
 }
 
