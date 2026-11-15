@@ -173,7 +173,7 @@ def describe_init():
     if not key:
         sys.exit("--describe needs GEMINI_API_KEY")
     client = genai.Client(api_key=key)
-    client.models.generate_content(model="gemini-2.5-flash", contents="Reply with the single word ok.")   # key check, one call
+    client.models.generate_content(model="gemini-3.5-flash", contents="Reply with the single word ok.")   # key check, one call
     return client
 
 
@@ -182,7 +182,7 @@ def describe(client, sheet):
     prompt = ("Six frames of one video clip, left to right. Reply as JSON only: {\"desc\": one plain sentence of what is in the "
               "clip (place, light, action), \"tags\": 5-12 lowercase English and Russian nouns/verbs a video editor would search for "
               "(e.g. beach, пляж, mountains, горы, laptop, ноутбук, swimming, плавание, night, ночь)}. Do not guess who people are.")
-    r = client.models.generate_content(model="gemini-2.5-flash", contents=[types.Part.from_bytes(data=open(sheet, "rb").read(), mime_type="image/jpeg"), prompt],
+    r = client.models.generate_content(model="gemini-3.5-flash", contents=[types.Part.from_bytes(data=open(sheet, "rb").read(), mime_type="image/jpeg"), prompt],
                                        config=types.GenerateContentConfig(response_mime_type="application/json"))
     j = json.loads(r.text)
     if not isinstance(j, dict) or "desc" not in j:

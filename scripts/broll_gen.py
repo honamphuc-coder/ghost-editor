@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate a still B-roll image with Gemini (vertical 9:16 by default).
 
-    broll_gen.py "<prompt>" <out.png> [--aspect 9:16] [--model gemini-2.5-flash-image]
+    broll_gen.py "<prompt>" <out.png> [--aspect 9:16] [--model gemini-3.1-flash-image]
 
 Needs GEMINI_API_KEY in the environment (or in <skill>/.env, gitignored);
 the key is never printed. Needs google-genai (pip install google-genai).
@@ -30,7 +30,7 @@ def main():
     ap.add_argument("prompt")
     ap.add_argument("out")
     ap.add_argument("--aspect", default="9:16")
-    ap.add_argument("--model", default="gemini-2.5-flash-image")
+    ap.add_argument("--model", default="gemini-3.1-flash-image")
     a = ap.parse_args()
     from google import genai
     from google.genai import types

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Reverse-engineer a reference edit you want to match.
 
-    reference_study.py <edited.mp4> --out <dir> [--model gemini-2.5-pro] [--raw raw.mp4]
+    reference_study.py <edited.mp4> --out <dir> [--model gemini-3.6-flash] [--raw raw.mp4]
 
 Writes into <dir>:
   sheet.jpg          1 frame per second, timestamped (look at it first)
@@ -38,7 +38,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("video")
     ap.add_argument("--out", required=True)
-    ap.add_argument("--model", default="gemini-2.5-pro")
+    ap.add_argument("--model", default="gemini-3.6-flash")
     ap.add_argument("--raw")
     a = ap.parse_args()
     os.makedirs(os.path.join(a.out, "frames"), exist_ok=True)
@@ -59,7 +59,7 @@ def main():
 
     from google import genai
     client = genai.Client(api_key=key())
-    ping = client.models.generate_content(model="gemini-2.5-flash", contents="Reply with the single word: ok")
+    ping = client.models.generate_content(model="gemini-3.5-flash", contents="Reply with the single word: ok")
     if not (ping.text or "").strip():
         sys.exit("Gemini key check failed (empty reply); not running the analysis")
     prompt = open(os.path.join(SKILL, "references", "reference-study-prompt.md")).read()

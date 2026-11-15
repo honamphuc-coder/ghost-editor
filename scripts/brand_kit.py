@@ -44,7 +44,7 @@ import image_sources as I  # noqa: E402
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) "
       "Chrome/131.0.0.0 Safari/537.36")
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-MODEL = os.environ.get("BRAND_KIT_MODEL", "gemini-2.5-flash")
+MODEL = os.environ.get("BRAND_KIT_MODEL", "gemini-3.5-flash")
 CACHE = os.path.expanduser("~/.cache/brand_kit")
 PAGE_BG = "#FDFDFD"                                           # product-page white (recipes/product-page/house.json)
 GENERIC = {"sans-serif", "serif", "monospace", "system-ui", "-apple-system", "blinkmacsystemfont", "ui-sans-serif",

@@ -3,7 +3,7 @@
 // caption-templates.mjs turns them into CSS classes (kw for the top word of each caption group,
 // t-<tag> for every tag) so a template can style or animate them.
 //
-//   node ai-tag.mjs <words.json> [--out tags.json] [--model gemini-2.5-flash]
+//   node ai-tag.mjs <words.json> [--out tags.json] [--model gemini-3.5-flash]
 //   import { aiTag } from "./ai-tag.mjs";  const ai = await aiTag(words, { cache: "build/ai-tags.json" });
 //
 // words.json: whisper json (segments[].words[]) or a flat [{word,start,end}] array.
@@ -17,11 +17,15 @@ export const AI_TAGS = ["emotion", "number", "name", "negation", "action", "cont
 async function call(model, key, body) {
   const r = await fetch(`${API}/${model}:generateContent`, { method: "POST", headers: { "x-goog-api-key": key, "Content-Type": "application/json" }, body: JSON.stringify(body) });
   const j = await r.json();
-  if (j.error) throw new Error(`Gemini ${model}: ${j.error.status || ""} ${j.error.message}`);
+  if (j.error) {
+    const viaProxy = process.env.HTTPS_PROXY && !process.env.NODE_USE_ENV_PROXY && !process.execArgv.includes("--use-env-proxy");
+    const hint = viaProxy && /API key/i.test(j.error.message || "") ? " (HTTPS_PROXY is set but Node is not using it: run node --use-env-proxy)" : "";
+    throw new Error(`Gemini ${model}: ${j.error.status || ""} ${j.error.message}${hint}`);
+  }
   return j.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("") ?? "";
 }
 
-export async function validateKey(key = process.env.GEMINI_API_KEY, model = "gemini-2.5-flash") {
+export async function validateKey(key = process.env.GEMINI_API_KEY, model = "gemini-3.5-flash") {
   if (!key) throw new Error("GEMINI_API_KEY is not set");
   const t = await call(model, key, { contents: [{ parts: [{ text: "Reply with: ok" }] }], generationConfig: { maxOutputTokens: 5, thinkingConfig: { thinkingBudget: 0 } } });
   if (!/ok/i.test(t)) throw new Error(`Gemini key check returned '${t}'`);
@@ -38,7 +42,7 @@ Return a JSON array with one object per word in order: {"i": index, "s": score, 
 
 ${lines}`;
 
-export async function aiTag(words, { model = "gemini-2.5-flash", key = process.env.GEMINI_API_KEY, cache } = {}) {
+export async function aiTag(words, { model = "gemini-3.5-flash", key = process.env.GEMINI_API_KEY, cache } = {}) {
   const flat = words.map((w) => String(w.word ?? w.text ?? "").trim());
   const hash = crypto.createHash("sha1").update(model + "\n" + flat.join(" ")).digest("hex").slice(0, 16);
   if (cache && fs.existsSync(cache)) {
@@ -70,9 +74,9 @@ export function loadWords(file) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const [file] = process.argv.slice(2).filter((a) => !a.startsWith("--"));
   const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
-  if (!file) { console.error("usage: node ai-tag.mjs <words.json> [--out tags.json] [--model gemini-2.5-flash]"); process.exit(1); }
+  if (!file) { console.error("usage: node ai-tag.mjs <words.json> [--out tags.json] [--model gemini-3.5-flash]"); process.exit(1); }
   const out = arg("--out", "ai-tags.json");
-  const res = await aiTag(loadWords(file), { model: arg("--model", "gemini-2.5-flash"), cache: out });
+  const res = await aiTag(loadWords(file), { model: arg("--model", "gemini-3.5-flash"), cache: out });
   console.log(res.map((x) => (x.score >= 2 ? `[${x.w}${x.score === 3 ? "!" : ""}]` : x.w)).join(" "));
   console.log("->", out);
 }

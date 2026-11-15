@@ -46,7 +46,7 @@ def translate(q, to):
                                               f"never swapped for a similar-sounding name. Answer with the query only.\n\n{q}"}]}],
             "generationConfig": {"temperature": 0, "thinkingConfig": {"thinkingBudget": 0}}}
     req = urllib.request.Request(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent",
         data=json.dumps(body).encode(), headers={"Content-Type": "application/json", "x-goog-api-key": key})
     try:
         j = json.load(urllib.request.urlopen(req, timeout=60))

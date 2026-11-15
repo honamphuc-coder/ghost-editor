@@ -34,7 +34,7 @@ sys.path.insert(0, HERE)
 import image_sources as I  # noqa: E402
 from broll_fetch import load, save  # noqa: E402
 
-MODEL = os.environ.get("IMAGE_PICK_MODEL", "gemini-2.5-pro")
+MODEL = os.environ.get("IMAGE_PICK_MODEL", "gemini-3.6-flash")
 PY = sys.executable
 _client = None
 

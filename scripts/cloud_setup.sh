@@ -8,6 +8,10 @@ log() { echo "[ghost-editor setup] $*"; }
 # SKILL.md uses ~/.claude/skills/ghost-editor as $S: point it at this checkout so the skill loads and paths resolve
 mkdir -p "$HOME/.claude/skills" && ln -sfn "$S" "$HOME/.claude/skills/ghost-editor"
 
+# Gemini: the real key is a network secret on the environment and the proxy injects it into every call to
+# generativelanguage.googleapis.com; the scripts only need some value to start. Placeholder, not a secret. Kept if present.
+grep -qs '^GEMINI_API_KEY=' "$S/.env" || echo 'GEMINI_API_KEY=dummy-proxy-injects-real-key' >> "$S/.env"
+
 # CPU-only torch is much smaller; needs download.pytorch.org allowed. Falls back to PyPI torch via openai-whisper.
 python3 -c "import torch" 2>/dev/null || \
   timeout 600 pip install -q torch --index-url https://download.pytorch.org/whl/cpu 2>/dev/null || log "CPU torch not available, PyPI torch will be used"

@@ -9,11 +9,11 @@ strict JSON list of every moment that breaks the user's rules:
   - a card / caption / graphic covering the speaker's face,
   - a visibly broken frame (black or blank flash, glitch, corrupted frame).
 
-    allframes_qa.py RENDER.mp4 [--fps 10] [--model gemini-2.5-flash] [--out FILE.json] [--media-res default|low]
+    allframes_qa.py RENDER.mp4 [--fps 10] [--model gemini-3.5-flash] [--out FILE.json] [--media-res default|low]
                     [--thinking 4096] [--rules all|people] [--keep-file]
 
-Each finding: t_start, t_end (seconds), what, rule, confidence (0-1). Prints the token usage and the cost (gemini-2.5-flash:
-$0.30 / 1M input, $2.50 / 1M output incl. thinking tokens; the usage fields of the response are the source). The uploaded file
+Each finding: t_start, t_end (seconds), what, rule, confidence (0-1). Prints the token usage and an estimated cost (gemini-2.5-flash list prices,
+$0.30 / 1M input, $2.50 / 1M output incl. thinking tokens; check the current price of the model in use; the usage fields of the response are the source). The uploaded file
 is deleted at the end (always, also on an error). Transient errors (5xx, timeouts, a bad / cut-off / degenerate answer) are
 retried up to 3 times; anything else (bad key, 429 spending cap, blocked) stops at once. Every attempt is billed, also a cut-off
 one: the cost printed is the sum over all attempts. An error is NEVER written as a result: no JSON file is written, exit code 2.
@@ -23,7 +23,7 @@ file finds a 0.1-0.5 s overlay in one run and not in the next), the face_covered
 (--rules people drops them).
 
 Key: GEMINI_API_KEY, or the skill's .env. Rules file: BROLL_PEOPLE_RULES, default people-rules.json next to SKILL.md.
-Cost on a 29 s reel (gemini-2.5-flash, default media resolution = 258 tokens per frame): ~0.03 USD at 10 fps, ~0.07 at 24 fps (see --media-res low).
+Cost on a 29 s reel (measured on gemini-2.5-flash, default media resolution = 258 tokens per frame): ~0.03 USD at 10 fps, ~0.07 at 24 fps (see --media-res low).
 """
 import argparse
 import json
@@ -35,7 +35,7 @@ import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RULES_PATH = os.environ.get("BROLL_PEOPLE_RULES") or os.path.join(HERE, "..", "people-rules.json")
-PRICE_IN, PRICE_OUT = 0.30, 2.50          # USD per 1M tokens, gemini-2.5-flash (output includes thinking tokens)
+PRICE_IN, PRICE_OUT = 0.30, 2.50          # USD per 1M tokens, gemini-2.5-flash list prices (retired); an estimate for the current default
 PROMPT_V = 2          # v2: seconds format spelled out (v1 once answered 00:08 as 0.08), short appearances count
 MAX_FPS = 24          # the API refuses videoMetadata.fps > 24 (400 INVALID_ARGUMENT, found by trying 30)
 RETRIES = 3
@@ -270,7 +270,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("render")
     ap.add_argument("--fps", type=float, default=10.0, help="frames per second Gemini samples (default 10; the API maximum is 24)")
-    ap.add_argument("--model", default=os.environ.get("ALLFRAMES_MODEL", "gemini-2.5-flash"))
+    ap.add_argument("--model", default=os.environ.get("ALLFRAMES_MODEL", "gemini-3.5-flash"))
     ap.add_argument("--out", help="result JSON (default: ./<render name>.allframes-<fps>fps.json)")
     ap.add_argument("--media-res", choices=["default", "low"], default="default",
                     help="low = 66 instead of 258 tokens per frame (cheaper at 30 fps, smaller details are lost)")
