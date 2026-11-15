@@ -34,3 +34,6 @@ library/toolchain/
 
 # Style library loops and posters (scripts/style_page.py previews; rebuilt from styles/registry.json, synced with the library)
 library/style-previews/
+
+# cloud session: finished reels to download (scripts/cloud_setup.sh, CLAUDE.md)
+out/
